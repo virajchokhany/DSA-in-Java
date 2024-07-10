@@ -2,6 +2,43 @@ import java.util.*;
 
 public class Arrays {
 
+    public static void rotateAnArray(char a[][])
+    {
+        int n=a.length;
+        // columnwise reverse
+        for(int i=0;i<n;i++)
+        {
+            int j =0,k=n-1;
+            while(j<k)
+            {
+                char t=a[j][i];
+                a[j][i]=a[k][i];
+                a[k][i]=t;
+                j++;
+                k--;
+            }
+        }
+
+        // transpose
+
+        for(int i=0;i<n;i++)
+        {
+            for(int j=i;j<n;j++)
+            {
+                char t = a[i][j];
+                a[i][j]=a[j][i];
+                a[j][i]=t;
+            }
+        }
+
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                System.out.print(a[i][j]+" ");
+            }System.out.println();
+        }
+    }
     public static void exitPointOfMatrix(int a[][])
     {
         int i=0,j=0,dir=0;
@@ -285,6 +322,8 @@ public class Arrays {
         Scanner sc = new Scanner(System.in);
         
         // spiralTraversal(new int[][]{{11,12,13,14,15,16,17},{21,22,23,24,25,26,27},{31,32,33,34,35,36,37},{41,42,43,44,45,46,47},{51,52,53,54,55,56,57}});
-        exitPointOfMatrix(new int[][]{{0,0,0,1},{0,0,0,0},{1,0,0,1},{0,1,1,0}});
+        // exitPointOfMatrix(new int[][]{{0,0,0,1},{0,0,0,0},{1,0,0,1},{0,1,1,0}});
+
+        rotateAnArray(new char[][]{{'a','b','c','d'},{'e','f','g','h'},{'i','j','k','l'},{'m','n','o','p'}});
     }
 }
