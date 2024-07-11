@@ -2,6 +2,161 @@ import java.util.*;
 
 public class Arrays {
 
+    public static void searchInSorted2DArray(int a[][],int key)
+    {
+        int r =0, c=a[0].length-1;
+        boolean found=false;
+        while(r>=0 && r<a.length && c>=0 && c<a[0].length)
+        {
+            if(a[r][c]==key)
+            {
+                System.out.println("Found at Row : "+ r +" Col : "+c);
+                found=true;
+                break;
+            }
+            else if (a[r][c]>key)
+            {
+                c--;
+            }
+            else
+                r++;
+        }
+        if(!found)
+            System.out.println("Value not found");
+    }
+    public static void saddlePoint(int a[][])
+    {
+        int row=-1,col=-1;
+        for(int i=0;i<a.length;i++)
+        {
+            int min = a[i][0];
+            col = 0; row = i;
+            for(int j=0;j<a[i].length;j++)
+            {
+                if(min>a[i][j])
+                {
+                    col=j;
+                    min= a[i][j];
+                }
+            }
+            // check if a[i][col] is max in column col
+            int max = a[i][col];
+            for(int j = 0;j<a.length;j++)
+            {
+               if(j!=i)
+               {
+                   if(a[j][col]<max)
+                   {
+
+                   }else{
+                       row=j;
+                       break;
+                   }
+               }
+            }
+            if(row==i)
+                break;
+        }
+        if(row==-1 || col==-1)
+            System.out.println("No saddle point");
+        else   
+            System.out.println("Row : "+row+" Col : "+col);
+
+    }
+
+    public static void diagonalTraversal(int a[][])
+    {
+        int n=a.length;
+
+        for(int diff = 0; diff<n ; diff++)
+        {
+            for(int i=0;i<n;i++)
+            {
+                if(i+diff<n)
+                    System.out.print(a[i][i+diff]+" ");
+            }
+        }
+        
+    }
+
+    public static void shellRotate(int a[][], int s, int rotation)
+    {
+        int tli = s-1, tlj= s-1, bli= a.length - s, blj = s -1, tri = s-1, trj = a[0].length-s, bri = a.length-s, brj = a[0].length-s;
+        rotation*=-1;
+        int size = 2*(a.length-4*s+a[0].length+2);
+        rotation = rotation % size;
+        if(rotation<0)
+            rotation = size + rotation;
+        System.out.println(size);
+        int b[]= new int[size];
+        int k=0;
+        int r =tli,c = tlj;
+        while(r<=bli)
+        {
+            b[k++]=a[r][c];
+            r++;
+        }
+        r--;
+        c++;
+        while(c<=brj)
+        {
+            b[k++]=a[r][c];
+            c++;
+        }
+        c--;
+        r--;
+        while(r>=tri)
+        {
+            b[k++]=a[r][c];
+            r--;
+        }
+        r++;
+        c--;
+        while(c>tlj)
+        {
+            b[k++]=a[r][c];
+            c--;
+        }
+
+        r=tli;c=tlj;
+        k = rotation;
+        while(r<=bli)
+        {
+            a[r][c]=b[k];
+            r++;
+            k= (k+1)%size;
+        }
+        r--;
+        c++;
+        while(c<=brj)
+        {
+            a[r][c]=b[k];
+            c++;
+            k= (k+1)%size;
+        }
+        c--;
+        r--;
+        while(r>=tri)
+        {
+            a[r][c]=b[k];
+            r--;
+            k= (k+1)%size;
+        }
+        r++;
+        c--;
+        while(c>tlj)
+        {
+            a[r][c]=b[k];
+            c--;
+            k= (k+1)%size;
+        }
+        for(int i=0;i<a.length;i++){
+            for(int j=0;j<a[i].length;j++){
+                System.out.print(a[i][j]+" ");
+            }
+            System.out.println();
+        }
+    }
     public static void rotateAnArray(char a[][])
     {
         int n=a.length;
@@ -324,6 +479,11 @@ public class Arrays {
         // spiralTraversal(new int[][]{{11,12,13,14,15,16,17},{21,22,23,24,25,26,27},{31,32,33,34,35,36,37},{41,42,43,44,45,46,47},{51,52,53,54,55,56,57}});
         // exitPointOfMatrix(new int[][]{{0,0,0,1},{0,0,0,0},{1,0,0,1},{0,1,1,0}});
 
-        rotateAnArray(new char[][]{{'a','b','c','d'},{'e','f','g','h'},{'i','j','k','l'},{'m','n','o','p'}});
+        // rotateAnArray(new char[][]{{'a','b','c','d'},{'e','f','g','h'},{'i','j','k','l'},{'m','n','o','p'}});
+
+        //shellRotate(new int[][]{{11,12,13,14,15,16,17},{21,22,23,24,25,26,27},{31,32,33,34,35,36,37},{41,42,43,44,45,46,47},{51,52,53,54,55,56,57}},3,1);
+        
+        // saddlePoint(new int[][]{{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,16}});
+        searchInSorted2DArray(new int[][]{{1,2,3,7},{4,5,6,8}},4);
     }
 }
