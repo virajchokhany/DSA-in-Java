@@ -163,23 +163,71 @@ public class LinkedList {
         }
         return start.next;
     }
+    
+    // NK^2
+    public static ListNode mergeKSortedLinkedLists(ListNode lists[]){
+        if(lists.length == 0)
+            return null;
+        ListNode l1=null,l2=null;
+        for(int i=0;i<lists.length;i++){
+            l2= lists[i];
+            l1 = mergeTwoLinkedLists(l1, l2);
+
+        }
+        return l1;
+    }
+    
+    // NlogK
+    public static ListNode mergeKSortedLinkedLists(ListNode lists[], int start, int end){
+        if(start>end)   return null;
+        else if(start==end) return lists[start];
+        int mid = (start+end)/2;
+        ListNode h1 = mergeKSortedLinkedLists(lists, start, mid);
+        ListNode h2 = mergeKSortedLinkedLists(lists, mid+1, end);
+        return mergeTwoLinkedLists(h1, h2);
+    }
+    
+    public static ListNode mergeSortLinkedList(ListNode head){
+        if(head==null || head.next == null) return head;
+        ListNode mid = midNode(head);
+        ListNode nHead = mid.next;
+        mid.next = null;
+        head = mergeSortLinkedList(head);
+        nHead = mergeSortLinkedList(nHead);
+        return mergeTwoLinkedLists(head, nHead);
+    }
     public static void main(String[] args) {
         ListNode l1 = new ListNode(1);
+        l1 = addLast(l1, new ListNode(7));
         l1 = addLast(l1, new ListNode(2));
         l1 = addLast(l1, new ListNode(6));
-        l1 = addLast(l1, new ListNode(7));
-        l1 = addLast(l1, new ListNode(15));
-        l1 = addLast(l1, new ListNode(24));
+        l1 = addLast(l1, new ListNode(3));
+        l1 = addLast(l1, new ListNode(5));
+        l1 = addLast(l1, new ListNode(4));
+        l1 = mergeSortLinkedList(l1);
         displayLinkedList(l1);
 
-        ListNode l2 = new ListNode(-1);
-        l2 = addLast(l2, new ListNode(0));
-        l2 = addLast(l2, new ListNode(6));
-        l2 = addLast(l2, new ListNode(17));
-        l2 = addLast(l2, new ListNode(25));
-        displayLinkedList(l2);
+        // ListNode l2 = new ListNode(0);
+        // l2 = addLast(l2, new ListNode(0));
+        // l2 = addLast(l2, new ListNode(1));
+        // l2 = addLast(l2, new ListNode(1));
+        // l2 = addLast(l2, new ListNode(1));
+        
+        // l2 = addLast(l2, new ListNode(2));
+        // l2 = addLast(l2, new ListNode(2));
+        // l2 = addLast(l2, new ListNode(4));
+        // displayLinkedList(l2);
 
-        ListNode mergedList = mergeTwoLinkedLists(l1, l2);
-        displayLinkedList(mergedList);
+        // ListNode l3 = new ListNode(0);
+        // l3 = addLast(l3, new ListNode(0));
+        // l3 = addLast(l3, new ListNode(0));
+        // l3 = addLast(l3, new ListNode(0));
+        // l3 = addLast(l3, new ListNode(5));
+        // l3 = addLast(l3, new ListNode(5));
+        // l3 = addLast(l3, new ListNode(6));
+        // displayLinkedList(l3);
+
+        // ListNode mergedList = mergeKSortedLinkedLists(new ListNode[]{l1,l2,l3},0,2);
+        // displayLinkedList(mergedList);
     }   
 }
