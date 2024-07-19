@@ -6,6 +6,7 @@ public class LinkedList {
     public static class ListNode{
         int val;
         ListNode next;
+        ListNode(){}
         ListNode(ListNode node){
             this.val = node.val;
             this.next = node.next;
@@ -130,23 +131,55 @@ public class LinkedList {
     }
     public static void displayLinkedList(ListNode head){
         while(head!=null){
-            System.out.print(head.val + " ");
+            System.out.print(head.val + " -> ");
             head=head.next;
         }
         System.out.println();
     }
+
+    public static ListNode mergeTwoLinkedLists(ListNode l1, ListNode l2){
+        if(l1==null)    return l2;
+        else if(l2==null)   return l1;
+
+        ListNode dummy = new ListNode();
+        ListNode start = dummy;
+        ListNode a = l1, c=l2;
+
+        while(a!=null && c!=null){
+            if(c.val<a.val){
+                dummy.next=c;
+                c=c.next;
+            }
+            else{
+                dummy.next=a;
+                a=a.next;
+            }
+            dummy=dummy.next;
+        }
+        if(a==null){
+            dummy.next=c;
+        }else{
+            dummy.next=a;
+        }
+        return start.next;
+    }
     public static void main(String[] args) {
-        ListNode head = new ListNode(1);
-        head = addLast(head, new ListNode(2));
-        head = addLast(head, new ListNode(3));
-        head = addLast(head, new ListNode(4));
-        head = addLast(head, new ListNode(5));
-        head = addLast(head, new ListNode(6));
-        //head = addLast(head, new ListNode(7));
-        displayLinkedList(head);
-        head = foldOfLinkedList(head);
-        displayLinkedList(head);
-        head = unfoldOfLinkedList(head);
-        displayLinkedList(head);
+        ListNode l1 = new ListNode(1);
+        l1 = addLast(l1, new ListNode(2));
+        l1 = addLast(l1, new ListNode(6));
+        l1 = addLast(l1, new ListNode(7));
+        l1 = addLast(l1, new ListNode(15));
+        l1 = addLast(l1, new ListNode(24));
+        displayLinkedList(l1);
+
+        ListNode l2 = new ListNode(-1);
+        l2 = addLast(l2, new ListNode(0));
+        l2 = addLast(l2, new ListNode(6));
+        l2 = addLast(l2, new ListNode(17));
+        l2 = addLast(l2, new ListNode(25));
+        displayLinkedList(l2);
+
+        ListNode mergedList = mergeTwoLinkedLists(l1, l2);
+        displayLinkedList(mergedList);
     }   
 }
