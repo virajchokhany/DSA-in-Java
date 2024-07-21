@@ -6,6 +6,7 @@ public class LinkedList {
     public static class ListNode{
         int val;
         ListNode next;
+        ListNode random;
         ListNode(){}
         ListNode(ListNode node){
             this.val = node.val;
@@ -196,15 +197,170 @@ public class LinkedList {
         nHead = mergeSortLinkedList(nHead);
         return mergeTwoLinkedLists(head, nHead);
     }
+    
+    public static ListNode segregateEvenOddNodesInLinkedList(ListNode head)
+    {
+        ListNode odd = new ListNode(), even = new ListNode(), oddHead =odd,evenHead=even;
+
+        while(head!=null){
+            if(head.val%2==0){
+                even.next=head;
+                even = even.next;
+            }else{
+                odd.next=head;
+                odd = odd.next;
+            }
+            head = head.next;
+        }
+        odd.next = null;
+        even.next  = oddHead.next;
+        return evenHead.next;
+    }
+
+
+    static ListNode  th=null, tt=null;
+
+    public static ListNode reverseNodesInGroupsOfK(ListNode head, int k){
+        if(head == null || head.next == null || k==0)
+            return head;
+        int length = lengthOfLinkedList(head);
+        ListNode c = head, f=null;
+        ListNode  oh = null, ot=null;
+        while(length >=k)
+        {
+            int kCopy = k;
+            while(kCopy-->0){
+                f=c.next;
+                c.next=null;
+                addFirst(c);
+                c=f;
+            }
+            length-=k;
+            if(oh==null){
+                oh=th;
+                ot=tt;
+            }else{
+                ot.next=th;
+                ot=tt;
+            }
+            th=tt=null;
+        }
+        if(length>0){
+            ot.next=c;
+        }
+        return oh;
+    }
+    private static void addFirst(ListNode c) {
+        if(tt==null){
+            th=tt=c;
+        }else{
+           c.next=th;
+           th=c;
+        }
+    }
+
+    private static int lengthOfLinkedList(ListNode head) {
+        int c=0;
+        while(head!=null){
+            c++;
+            head = head.next;
+        }
+        return c;
+    }
+
+    public static ListNode copyListWithRandomPointers(ListNode head){
+        if(head == null)    return null;
+        ListNode curr = head;
+
+        while(curr!=null){
+            ListNode forw =curr.next;
+            ListNode node = new ListNode(curr.val);
+            curr.next = node;
+            node.next = forw;
+            curr=forw;
+        }
+        ListNode c1 = head,c2=c1.next;
+        while(c1!=null){
+            c2=c1.next;
+            if(c1.random!=null)
+                c2.random = c1.random.next;
+            else
+                c2.random = c1.random;
+            c1=c1.next.next;
+        }
+        c1=head;c2=c1.next;
+        ListNode nHead = c2;
+        while(c1!=null){
+            c1.next = c2.next;
+            if(c2.next!=null)
+                c2.next = c2.next.next;
+            c1 = c1.next;
+            c2=c2.next;
+        }
+        return nHead;
+    }
+    
+    public static boolean isCyclePresentInLinkedList(ListNode head)
+    {
+        if(head==null || head.next==null)   return false;
+        ListNode slow=head,fast=head;
+        while(fast!=null && fast.next!=null){
+            slow=slow.next;
+            fast=fast.next.next;
+            if(slow==fast)
+                return true;
+        }
+        return false;
+    }
+
+    public static ListNode meetingPointOfCycle(ListNode head)
+    {
+        if(head==null || head.next==null)   return null;
+        ListNode slow=head,fast=head;
+        while(fast!=null && fast.next!=null){
+            slow=slow.next;
+            fast=fast.next.next;
+            if(slow==fast)
+                return slow;
+        }
+        return null;
+    }
+    public static ListNode startingPointOfCycleInLinkedList(ListNode head){
+        ListNode meetingPoint = meetingPointOfCycle(head);
+        if(meetingPoint==null)  return null;
+        while(head!=meetingPoint){
+            head=head.next;
+            meetingPoint=meetingPoint.next;
+        }
+        return head;
+    }
+
+    public static ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if(headA==null || headB == null)    return null;
+        ListNode  curr = headA,tail = null;
+        while(curr!=null){
+            tail=curr;
+            curr=curr.next;
+        }
+        tail.next=headB;
+        ListNode meetingPoint = startingPointOfCycleInLinkedList(headA);
+        tail.next=null;
+        return meetingPoint;
+    }
     public static void main(String[] args) {
         ListNode l1 = new ListNode(1);
-        l1 = addLast(l1, new ListNode(7));
         l1 = addLast(l1, new ListNode(2));
-        l1 = addLast(l1, new ListNode(6));
         l1 = addLast(l1, new ListNode(3));
-        l1 = addLast(l1, new ListNode(5));
         l1 = addLast(l1, new ListNode(4));
-        l1 = mergeSortLinkedList(l1);
+        l1 = addLast(l1, new ListNode(5));
+        // l1 = addLast(l1, new ListNode(6));
+        // l1 = addLast(l1, new ListNode(7));
+        // l1 = addLast(l1, new ListNode(18));
+        // l1 = addLast(l1, new ListNode(19));
+        // l1 = addLast(l1, new ListNode(20));
+        // l1 = addLast(l1, new ListNode(201));
+        // l1 = addLast(l1, new ListNode(2011));
+        l1 = reverseNodesInGroupsOfK(l1,3);
         displayLinkedList(l1);
 
         // ListNode l2 = new ListNode(0);
