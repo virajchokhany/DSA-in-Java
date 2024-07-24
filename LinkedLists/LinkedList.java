@@ -347,28 +347,63 @@ public class LinkedList {
         tail.next=null;
         return meetingPoint;
     }
+
+    public static ListNode addTwoLinkedLists(ListNode l1, ListNode l2){
+        if(l1==null)    return l2;
+        if(l2 == null)  return l1;
+
+        l1 = reverseLinkedListIterative(l1);
+        l2 = reverseLinkedListIterative(l2);
+
+        ListNode d1=l1, d2=l2;
+        ListNode l3 = new ListNode(), d3 =l3;
+
+        int carry = 0;
+
+        while(d1!=null || d2!=null || carry!=0){
+            int sum = (d1!=null ? d1.val : 0) + (d2!=null ? d2.val : 0) + carry;
+            int digit = sum%10;
+            carry = sum/10;
+            ListNode node = new ListNode(digit);
+            d3.next = node;
+            d3=d3.next;
+            if(d1!=null)
+                d1=d1.next;
+            if(d2!=null)
+                d2=d2.next;
+        }
+        d3 = l3.next;
+        l3.next = null;
+        l3=d3;
+        l3 = reverseLinkedListIterative(l3);
+        l1 = reverseLinkedListIterative(l1);
+        l2 = reverseLinkedListIterative(l2);
+        return l3;
+        
+    }
     public static void main(String[] args) {
-        ListNode l1 = new ListNode(1);
-        l1 = addLast(l1, new ListNode(2));
+        ListNode l1 = new ListNode(9);
+        l1 = addLast(l1, new ListNode(9));
+        l1 = addLast(l1, new ListNode(8));
+        l1 = addLast(l1, new ListNode(7));
         l1 = addLast(l1, new ListNode(3));
-        l1 = addLast(l1, new ListNode(4));
-        l1 = addLast(l1, new ListNode(5));
-        // l1 = addLast(l1, new ListNode(6));
+        l1 = addLast(l1, new ListNode(2));
         // l1 = addLast(l1, new ListNode(7));
         // l1 = addLast(l1, new ListNode(18));
         // l1 = addLast(l1, new ListNode(19));
         // l1 = addLast(l1, new ListNode(20));
         // l1 = addLast(l1, new ListNode(201));
         // l1 = addLast(l1, new ListNode(2011));
-        l1 = reverseNodesInGroupsOfK(l1,3);
+        // l1 = reverseNodesInGroupsOfK(l1,3);
         displayLinkedList(l1);
 
-        // ListNode l2 = new ListNode(0);
-        // l2 = addLast(l2, new ListNode(0));
-        // l2 = addLast(l2, new ListNode(1));
-        // l2 = addLast(l2, new ListNode(1));
-        // l2 = addLast(l2, new ListNode(1));
-        
+        ListNode l2 = new ListNode(2);
+        l2 = addLast(l2, new ListNode(2));
+        l2 = addLast(l2, new ListNode(6));
+        l2 = addLast(l2, new ListNode(8));
+        displayLinkedList(l2);
+        ListNode l3 = addTwoLinkedLists(l1,l2);
+        displayLinkedList(l3);
         // l2 = addLast(l2, new ListNode(2));
         // l2 = addLast(l2, new ListNode(2));
         // l2 = addLast(l2, new ListNode(4));
