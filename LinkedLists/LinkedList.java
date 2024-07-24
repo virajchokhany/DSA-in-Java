@@ -381,14 +381,52 @@ public class LinkedList {
         return l3;
         
     }
+
+    public static ListNode subtractTwoLinkedLists(ListNode l1, ListNode l2){
+        if(l1==null)    return l2;
+        if(l2==null)    return l2;
+
+        l1 = reverseLinkedListIterative(l1);
+        l2 = reverseLinkedListIterative(l2);
+        ListNode l3 = new ListNode(), d1=l1,d2=l2,d3=l3;
+        int borrow = 0;
+
+        while(l1!=null || l2!=null || borrow !=0)
+        {
+            int l1value = (l1!=null ? l1.val : 0);
+            int l2value = (l2!=null ? l2.val : 0);
+            int diff;
+            if(l1value<l2value+borrow)
+            {
+                diff = l1value-l2value+10-borrow;
+                borrow = 1;
+            }else{
+                diff = l1value-l2value-borrow;
+                borrow = 0;
+            }
+            ListNode node = new ListNode(diff);
+            d3.next = node;
+            d3 =d3.next;
+            if(l1!=null)    l1 = l1.next;
+            if(l2!=null)    l2 = l2.next;
+
+        }
+        d3 = l3.next;
+        l3.next = null;
+        l3 = d3;
+        l3 = reverseLinkedListIterative(l3);
+        l1 = reverseLinkedListIterative(l1);
+        l2 = reverseLinkedListIterative(l2);
+        return l3;
+    }
     public static void main(String[] args) {
-        ListNode l1 = new ListNode(9);
-        l1 = addLast(l1, new ListNode(9));
-        l1 = addLast(l1, new ListNode(8));
-        l1 = addLast(l1, new ListNode(7));
-        l1 = addLast(l1, new ListNode(3));
+        ListNode l1 = new ListNode(1);
         l1 = addLast(l1, new ListNode(2));
-        // l1 = addLast(l1, new ListNode(7));
+        l1 = addLast(l1, new ListNode(3));
+        l1 = addLast(l1, new ListNode(4));
+        l1 = addLast(l1, new ListNode(5));
+        l1 = addLast(l1, new ListNode(6));
+        l1 = addLast(l1, new ListNode(7));
         // l1 = addLast(l1, new ListNode(18));
         // l1 = addLast(l1, new ListNode(19));
         // l1 = addLast(l1, new ListNode(20));
@@ -397,12 +435,12 @@ public class LinkedList {
         // l1 = reverseNodesInGroupsOfK(l1,3);
         displayLinkedList(l1);
 
-        ListNode l2 = new ListNode(2);
-        l2 = addLast(l2, new ListNode(2));
-        l2 = addLast(l2, new ListNode(6));
+        ListNode l2 = new ListNode(7);
         l2 = addLast(l2, new ListNode(8));
+        l2 = addLast(l2, new ListNode(9));
+        //l2 = addLast(l2, new ListNode(9));
         displayLinkedList(l2);
-        ListNode l3 = addTwoLinkedLists(l1,l2);
+        ListNode l3 = subtractTwoLinkedLists(l1,l2);
         displayLinkedList(l3);
         // l2 = addLast(l2, new ListNode(2));
         // l2 = addLast(l2, new ListNode(2));
