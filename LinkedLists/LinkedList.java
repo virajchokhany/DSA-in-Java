@@ -419,14 +419,57 @@ public class LinkedList {
         l2 = reverseLinkedListIterative(l2);
         return l3;
     }
+    private static ListNode multiplyListWithDigit(ListNode head, int digit){
+        if(head == null)    return null;
+        int carry = 0;
+        ListNode dummy = new ListNode(), prev = dummy;
+        while(head!=null || carry!=0)
+        {
+            int product = digit * (head!=null ? head.val : 0) + carry;
+            ListNode node = new ListNode(product%10);
+            carry = product/10;
+            prev.next = node;
+            prev=node;
+            if(head!=null)
+                head = head.next;
+        }
+        prev = dummy.next;
+        dummy.next = null;
+        return prev;
+    }
+    public static ListNode multiplyTwoLinkedLists(ListNode l1, ListNode l2){ // 12345 789
+        if(l1==null)    return l2;
+        if(l2==null)    return l1;
+
+        l1 = reverseLinkedListIterative(l1); // 54321
+        l2 = reverseLinkedListIterative(l2); // 987
+        ListNode l3 = new ListNode(), d1 = l1, d2 = l2, d3=l3;
+        int numberOfZeroesToAdd = 0;
+        ListNode sum = null;
+        while(d2!=null){
+            ListNode list = multiplyListWithDigit(l1, d2.val);
+            for(int i=1;i<=numberOfZeroesToAdd;i++){
+                ListNode node = new ListNode(0);
+                node.next = list;
+                list = node;
+            }
+            numberOfZeroesToAdd++;
+            list = reverseLinkedListIterative(list);
+            sum = addTwoLinkedLists(sum, list);
+            d2 = d2.next;
+        }
+        l1 = reverseLinkedListIterative(l1);
+        l2 = reverseLinkedListIterative(l2);
+        //sum = reverseLinkedListIterative(sum);
+        return sum;
+
+    }
     public static void main(String[] args) {
         ListNode l1 = new ListNode(1);
         l1 = addLast(l1, new ListNode(2));
         l1 = addLast(l1, new ListNode(3));
         l1 = addLast(l1, new ListNode(4));
         l1 = addLast(l1, new ListNode(5));
-        l1 = addLast(l1, new ListNode(6));
-        l1 = addLast(l1, new ListNode(7));
         // l1 = addLast(l1, new ListNode(18));
         // l1 = addLast(l1, new ListNode(19));
         // l1 = addLast(l1, new ListNode(20));
@@ -440,7 +483,7 @@ public class LinkedList {
         l2 = addLast(l2, new ListNode(9));
         //l2 = addLast(l2, new ListNode(9));
         displayLinkedList(l2);
-        ListNode l3 = subtractTwoLinkedLists(l1,l2);
+        ListNode l3 = multiplyTwoLinkedLists(l1,l2);
         displayLinkedList(l3);
         // l2 = addLast(l2, new ListNode(2));
         // l2 = addLast(l2, new ListNode(2));
