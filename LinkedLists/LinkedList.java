@@ -464,27 +464,119 @@ public class LinkedList {
         return sum;
 
     }
+
+    public static ListNode removeDuplicateNodesFromLinkedList(ListNode head){
+        if(head == null || head.next == null)   return head;
+
+        ListNode forw = head,dummy = head;
+
+        while(head!=null){
+            while(forw!=null && forw.val == head.val){
+                ListNode next = forw.next;
+                forw.next = null;
+                forw = next;
+            }
+            head.next = forw;
+            head = head.next;
+        }
+
+        return dummy;
+    }
+
+    public static ListNode removeDuplicateNodesUsingAddLast(ListNode head){
+        ListNode th = null, tt = null;
+
+        while(head!=null){
+            ListNode next = head.next;
+            head.next = null;
+            if(tt==null){
+                th = tt = head;
+            }else{
+                if(tt.val!=head.val){
+                    tt.next = head;
+                    tt= tt.next;
+                }
+            }
+            head = next;
+        }
+        return th;
+    }
+
+    public static ListNode removeAllDuplicatesFromLInkedList(ListNode head){
+        if(head==null || head.next == null) return head;
+
+        ListNode dummy = new ListNode();
+        dummy.next = head;
+        ListNode itr = dummy;
+
+        ListNode curr = head.next;
+
+        while(curr!=null){
+            boolean flag=false;
+            while(itr.next!=null && curr!=null && itr.next.val == curr.val){
+                curr=curr.next;
+                flag=true;
+            }
+            if(flag){
+                itr.next = curr;
+            }else{
+                itr=itr.next;
+            }
+            if(curr!=null)
+            curr=curr.next;
+        }
+        return dummy.next;
+    }
+
+    public static ListNode segregate01(ListNode head){
+        if(head==null || head.next==null)   return head;
+    
+        ListNode zero = new ListNode(),one = new ListNode(), pz=zero,po=one;
+
+        while(head!=null){
+            if(head.val==0){
+                pz.next=head;
+                pz=pz.next;
+            }else{
+                po.next=head;
+                po=head;
+            }
+            head=head.next;
+        }
+        po.next=null;
+        pz.next=one.next;
+        return zero.next;
+    }
     public static void main(String[] args) {
         ListNode l1 = new ListNode(1);
-        l1 = addLast(l1, new ListNode(2));
-        l1 = addLast(l1, new ListNode(3));
+        l1 = addLast(l1, new ListNode(1));
+        l1 = addLast(l1, new ListNode(1));
         l1 = addLast(l1, new ListNode(4));
         l1 = addLast(l1, new ListNode(5));
+        
+        l1 = addLast(l1, new ListNode(6));
+        l1 = addLast(l1, new ListNode(6));
+        l1 = addLast(l1, new ListNode(7));
+        l1 = addLast(l1, new ListNode(8));
+
+        
+        l1 = addLast(l1, new ListNode(9));
+        l1 = addLast(l1, new ListNode(9));
         // l1 = addLast(l1, new ListNode(18));
         // l1 = addLast(l1, new ListNode(19));
         // l1 = addLast(l1, new ListNode(20));
         // l1 = addLast(l1, new ListNode(201));
         // l1 = addLast(l1, new ListNode(2011));
         // l1 = reverseNodesInGroupsOfK(l1,3);
+        l1 = removeDuplicateNodesUsingAddLast(l1);
         displayLinkedList(l1);
-
-        ListNode l2 = new ListNode(7);
-        l2 = addLast(l2, new ListNode(8));
-        l2 = addLast(l2, new ListNode(9));
-        //l2 = addLast(l2, new ListNode(9));
-        displayLinkedList(l2);
-        ListNode l3 = multiplyTwoLinkedLists(l1,l2);
-        displayLinkedList(l3);
+        // ListNode l2 = new ListNode(7);
+        // l2 = addLast(l2, new ListNode(8));
+        // l2 = addLast(l2, new ListNode(9));
+        // //l2 = addLast(l2, new ListNode(9));
+        // displayLinkedList(l2);
+        // ListNode l3 = multiplyTwoLinkedLists(l1,l2);
+        // displayLinkedList(l3);
         // l2 = addLast(l2, new ListNode(2));
         // l2 = addLast(l2, new ListNode(2));
         // l2 = addLast(l2, new ListNode(4));
