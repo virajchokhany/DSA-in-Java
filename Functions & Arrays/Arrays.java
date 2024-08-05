@@ -486,4 +486,6 @@ public class Arrays {
         // saddlePoint(new int[][]{{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,16}});
         searchInSorted2DArray(new int[][]{{1,2,3,7},{4,5,6,8}},4);
     }
+    public static void sort(int[][] intervals, Stacks stacks, Object object) {
+    }
 }

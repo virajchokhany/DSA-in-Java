@@ -333,6 +333,42 @@ public class Stacks {
         }
         return isCeleb ? x : -1;
     }
+    
+    public static int postfixEvaluation(String s){
+        Stack<Integer> st = new Stack<>();
+        Stack<String> infix = new Stack<>();
+        Stack<String> prefix = new Stack<>();
+        for(int i=0;i<s.length();i++){
+            char ch = s.charAt(i);
+            if(ch=='+' || ch=='-' || ch=='*' || ch=='/'){
+                int second = st.pop();
+                int first = st.pop();
+                st.push(evaluate(first, second, ch));
+                String secondInfix = infix.pop();
+                String firstInfix = infix.pop();
+                String secondPrefix = prefix.pop();
+                String firstPrefix = prefix.pop();
+                prefix.push(ch+firstPrefix+secondPrefix);
+                infix.push("("+firstInfix+ch+secondInfix+")");
+            }else{
+                st.push(ch-'0');
+                infix.push(ch+"");
+                prefix.push(ch+"");
+            }
+        }
+        System.out.println("Infix ->"+infix.pop());
+        System.out.println("Prefix -> " + prefix.pop());
+        return st.pop();
+    }
+
+    public int[][] merge(int[][] intervals) {
+        Arrays.sort(intervals,(this,other) ->{
+            return this[0]-other[0];
+        });
+
+        Stack<Integer[]> st = new S
+    }
+   
     public static void main(String[] args) {
         // int a[]= new int[]{6,2,5,4,5,1,6};
         // // int ans[]=stockSpan(a);
@@ -345,6 +381,7 @@ public class Stacks {
         // System.out.println(rainWaterTrapping(new int[]{3,0,0,2,0,4}));
 
         // System.out.println(infixEvaluation("42"));
-        System.out.println(infixToPostfix("a*(b-c)/d+e",false));
+        // System.out.println(infixToPostfix("a*(b-c)/d+e",false));
+        System.out.println(postfixEvaluation("264*8/+3-"));
     }
 }
