@@ -1,10 +1,8 @@
 package GenericTree;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
+
+import javax.swing.text.html.HTMLDocument.Iterator;
 
 public class GenericTree {
     
@@ -375,6 +373,84 @@ public class GenericTree {
         }
         return ans;
     }
+
+    public static class Pair{
+        int state;
+        Node node;
+        public Pair(int state,Node node) {
+            this.state=state;
+            this.node=node;
+        }
+    }
+    public static void iterativePreAndPostOrder(Node root){
+        Stack<Pair> st = new Stack<>();
+        st.push(new Pair(-1,root));
+        String preOrder = "";
+        String postOrder = "";
+        while(st.size()>0){
+            if(st.peek().state==-1){
+                preOrder+=st.peek().node.data+" ";
+                st.peek().state= st.peek().state+1;
+            }else if(st.peek().state == st.peek().node.children.size()){
+                postOrder+=st.peek().node.data+" ";
+                st.pop();
+            }else{
+                st.peek().state= st.peek().state+1;
+                st.push(new Pair(-1,st.peek().node.children.get(st.peek().state-1)));
+            }
+        }
+        System.out.println("Preorder : "+preOrder);
+        System.out.println("Postorder : "+postOrder);
+    }
+    public static class TreeIterable implements Iterable<Node>
+    {
+        static Node root;
+        public TreeIterable(Node root) {
+            this.root=root;
+        }
+        public java.util.Iterator<Node> iterator() {
+            // TODO Auto-generated method stub
+            java.util.Iterator<Node> obj= new TreeIterablePreorder(root);
+            return obj;
+        }
+    }
+    public static class TreeIterablePreorder implements java.util.Iterator<Node>{
+        static Stack<Pair> st = new Stack<>();
+        static Node current;
+
+        public TreeIterablePreorder(Node root) {
+            st.push(new Pair(-1,root));
+            next();
+        }
+        @Override
+        public boolean hasNext() {
+            if(current==null)   return false;
+            return true;
+        }
+        @Override
+        public Node next() {
+            Node rval = current;
+            current = null;
+            while(st.size()>0){
+                Pair top = st.peek();
+                if(top.state==-1){
+                    top.state=0;
+                    current = top.node;
+                    break;
+                }else if(top.state == top.node.children.size()){
+                    st.pop();
+    
+                }else{
+                    top.state++;
+                    st.push(new Pair(-1, top.node.children.get(top.state-1)));
+                }
+            }
+            
+            
+            return rval;
+        }
+
+    }
     public static void main(String[] args) {
         //int arr[]=new int[]{10,20,50,-1,60,-1,-1,30,70,-1,80,110,-1,120,-1,-1,90,-1,-1,40,100,-1,-1,-1};
         int []arr=new int[]{10,20,-50,-1,-60,-1,-1,30,-70,-1,80,-110,-1,120,-1,-1,90,-1,-1,40,-100,-1,-1,-1};
@@ -418,6 +494,15 @@ public class GenericTree {
         // MaxSubTreeSum ans = maxSubTreeSum(root);
         // System.out.println("MAX SUM "+ans.sum+ " Node : "+ans.node.data);
 
-        System.out.println(diameterOfGT(root).diameter);
+        // System.out.println(diameterOfGT(root).diameter);
+        // iterativePreAndPostOrder(root);
+
+        TreeIterable tree = new TreeIterable(root);
+        java.util.Iterator<Node> itr = tree.iterator();
+        while(itr.hasNext()){
+            System.out.println(itr.next().data);
+        }
+
     }
+
 }
