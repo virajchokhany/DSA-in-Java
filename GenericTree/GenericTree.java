@@ -298,10 +298,88 @@ public class GenericTree {
         }
         return root;
     }
+    public static int kthLargest(Node root, int k){
+        int val = Integer.MAX_VALUE;
+        for(int i=1;i<=k;i++){
+            floor=Integer.MIN_VALUE;
+            ceilAndFloor(root, val);
+            System.out.println(floor);
+            val=floor;
+
+        }
+        return val;
+    }
+    public static class MaxSubTreeSum{
+        Node node;
+        int sum;
+        int subTreeSum;
+        public MaxSubTreeSum() {
+            
+        }
+        public MaxSubTreeSum(Node node, int sum,int subTreeSum) {
+            this.node=node;
+            this.sum=sum;
+            this.subTreeSum=subTreeSum;
+        }
+    }
+    public static MaxSubTreeSum maxSubTreeSum(Node root){
+        if(root.children.size()==0) return new MaxSubTreeSum(root,root.data,root.data);
+
+        int mxSum = Integer.MIN_VALUE;
+
+        MaxSubTreeSum ans = new MaxSubTreeSum();
+
+        int totalSum = root.data;
+        for(Node child : root.children){
+            MaxSubTreeSum cans = maxSubTreeSum(child);
+            if(cans.sum > mxSum){
+                mxSum = cans.sum;
+                ans.sum = cans.sum;
+                ans.node = cans.node;
+                ans.subTreeSum=cans.subTreeSum;
+            }
+            totalSum+=cans.subTreeSum;
+        }
+        if(totalSum > mxSum){
+            ans.sum = totalSum;
+            ans.node=root;
+        }
+        ans.subTreeSum = totalSum;
+        return ans;
+    }
+
+    public static class Diameter{
+        int diameter;
+        int height;
+    }
+    public static Diameter diameterOfGT(Node root){
+        Diameter ans = new Diameter();
+
+        int maxChildHeight = -1,secondMaxChildHeight = -1;
+
+        for(Node child : root.children){
+            Diameter cans = diameterOfGT(child);
+            if(cans.diameter>ans.diameter){
+                ans.diameter = cans.diameter;
+            }
+            if(cans.height>maxChildHeight){
+                secondMaxChildHeight = maxChildHeight;
+                maxChildHeight = cans.height;
+            }else if (cans.height>secondMaxChildHeight && cans.height<maxChildHeight){
+                secondMaxChildHeight = cans.height;
+            }
+        }
+        ans.height = maxChildHeight+1;
+        if(maxChildHeight+secondMaxChildHeight + 2 > ans.diameter){
+            ans.diameter = maxChildHeight + secondMaxChildHeight + 2;
+        }
+        return ans;
+    }
     public static void main(String[] args) {
-        int arr[]=new int[]{10,20,50,-1,60,-1,-1,30,70,-1,80,110,-1,120,-1,-1,90,-1,-1,40,100,-1,-1,-1};
+        //int arr[]=new int[]{10,20,50,-1,60,-1,-1,30,70,-1,80,110,-1,120,-1,-1,90,-1,-1,40,100,-1,-1,-1};
+        int []arr=new int[]{10,20,-50,-1,-60,-1,-1,30,-70,-1,80,-110,-1,120,-1,-1,90,-1,-1,40,-100,-1,-1,-1};
+        //int arr[]= new int[]{111,-110,-1,120,-1,-1};
         Node root = constructTree(arr);
-        // arr=new int[]{10,20,60,-1,-1,30,70,-1,80,110,-1,120,-1,-1,90,-1,-1,40,100,-1,-1,-1};
         // Node root2 = constructTree(arr);
         // levelOrderLinewiseZigZag(root);
         // System.out.println(sizeOfGT(root));
@@ -329,9 +407,17 @@ public class GenericTree {
         // System.out.println("Pre "+pre.data);
         // System.out.println("Succ "+succ.data);
 
-        ceil = Integer.MAX_VALUE;
-        floor=Integer.MIN_VALUE;
-        ceilAndFloor(root, 65);
-        System.out.println("Ceil "+ceil+" Floor "+floor);
+        // ceil = Integer.MAX_VALUE;
+        // floor=Integer.MIN_VALUE;
+        
+        // ceilAndFloor(root, Integer.MAX_VALUE);
+        // System.out.println(floor);
+
+        // System.out.println(kthLargest(root, 3));
+
+        // MaxSubTreeSum ans = maxSubTreeSum(root);
+        // System.out.println("MAX SUM "+ans.sum+ " Node : "+ans.node.data);
+
+        System.out.println(diameterOfGT(root).diameter);
     }
 }
