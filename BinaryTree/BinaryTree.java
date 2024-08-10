@@ -416,6 +416,145 @@ public class BinaryTree {
         node.left = constructBSTFromPostorder(post, l, node.data);
         return node;
     }   
+    static int camera = 0;
+    public static int cameraInBinaryTree(Node root){
+        if(root == null)    return 1;   
+        int left = cameraInBinaryTree(root.left);
+        int right = cameraInBinaryTree(root.right);
+        if(left==-1 || right == -1){
+            camera++;
+            return 0;
+        }
+        else if(left== 0 || right==0){
+            return 1;
+        }
+        return -1;
+    }
+    static class Robber{
+        int include;
+        int exclude;
+    }
+    public static Robber houseRobber(Node root){
+        if(root==null)  return new Robber();
+        Robber left = houseRobber(root.left);
+        Robber right = houseRobber(root.right);
+
+        Robber ans = new Robber();
+        ans.include = root.data + left.exclude + right.exclude;
+        ans.exclude = Math.max(left.include, left.exclude) + Math.max(right.include,right.exclude);
+        return ans;
+    }
+
+    static class ZigZag{
+        int forward=-1;
+        int backward=-1;
+        int path=-1;
+    }
+    public static ZigZag longestZigZagPath(Node root){
+        if(root == null){
+            ZigZag z = new ZigZag();
+            return z;
+        }
+        ZigZag left = longestZigZagPath(root.left);
+        ZigZag right = longestZigZagPath(root.right);
+        ZigZag ans = new ZigZag();
+        ans.forward = 1 + right.backward;
+        ans.backward = 1 + left.forward;
+        ans.path = Math.max(left.path, Math.max(right.path, Math.max(ans.forward, ans.backward)));
+        return ans;
+    }
+
+    public static Node createBinaryTreeFromPreorderAndPostorder(int pre[], int post[], int presi, int preei, int postsi,int postei){
+        if(presi>preei || postsi>postei)    return null;
+
+        if(presi==preei  || postsi==postei) return new Node(post[postei]);
+        Node node = new Node(pre[presi]);
+        int idx = findIndex(pre[presi+1],post);
+        int count = idx-postsi+1;
+        node.left = createBinaryTreeFromPreorderAndPostorder(pre, post, presi+1, presi+count, postsi, idx);
+        node.right = createBinaryTreeFromPreorderAndPostorder(pre, post, presi+count+1, preei, idx+1, postei-1);
+        return node;
+    }
+    private static int findIndex(int x, int[] post) {
+        // TODO Auto-generated method stub
+        int i = 0;
+        while(post[i]!=x)i++;
+        return i;
+    }
+
+    public static Node constructBinaryTreeFromInorderAndLevelOrder(int in[],int level[], int isi, int iei){
+        if(level.length == 0 || isi>iei) return null;
+        if(isi==iei) return new Node(level[0]);
+        Node node = new Node(level[0]);
+        int idx = findIndex(level[0], in);
+        HashSet<Integer> set = new HashSet<>();
+        for(int i=isi;i<idx;i++)
+            set.add(in[i]);
+        int left[]=new int[idx-isi];
+        int l=0,r=0;
+        int right[]=new int[iei-idx];
+        for(int i=1;i<level.length;i++){
+            if(set.contains(level[i])){
+                left[l++]=level[i];
+                set.remove(level[i]);
+            }else{
+                right[r++]=level[i];
+            }
+        }
+        node.left = constructBinaryTreeFromInorderAndLevelOrder(in, left, isi, idx-1);
+        node.right = constructBinaryTreeFromInorderAndLevelOrder(in, right, idx+1, iei);
+        return node;
+    }
+    static class ConstructBST{
+        Node node;
+        int leftRange;
+        int rightRange;
+        public ConstructBST(Node node, int left, int right) {
+           this.node = node;
+           leftRange=left;
+           rightRange=right;
+        }
+        public ConstructBST() {
+            super();
+        }
+    }
+    public static Node constructBSTFromLevelOrder(int level[]){
+        Queue<ConstructBST> queue = new ArrayDeque<>();
+        Node root = new Node(level[0]);
+        int i=1;
+        queue.add(new ConstructBST(root,-(int)1e9,(int)1e9));
+        while(i<level.length){
+            Node node = new Node(level[i]);
+            while(queue.size()>0){
+                ConstructBST first = queue.peek();
+                if(!((node.data>first.leftRange && node.data<first.node.data) || (node.data> first.node.data && node.data<first.rightRange))){ // attach to lc
+                    queue.remove();
+                }
+                else{
+                    break;
+                }
+            }
+            ConstructBST first = queue.peek();
+            ConstructBST constructBST = new ConstructBST();
+            if(node.data>first.leftRange && node.data<first.node.data){ // attach to lc
+                    first.node.left = node;
+                    constructBST.rightRange = first.node.data;
+                    constructBST.node = node;
+                    constructBST.leftRange = first.leftRange;
+            }else if(node.data> first.node.data && node.data<first.rightRange){ // attach as rc and remove
+                    first.node.right = node;
+                    constructBST.rightRange = first.rightRange;
+                    constructBST.node = node;
+                    constructBST.leftRange = first.node.data;
+                    queue.remove();
+            }
+            
+            queue.add(constructBST);
+            i++;
+        }
+
+        return root;
+    }
     public static void main(String[] args) {
         // Integer arr[]=new Integer[]{50,25,12,null,null,37,30,null,null,40,null,null,75,62,60,51,null,null,61,null,null,77,74,null,null,78,null,null,87,null,null};
         // Node root = construct(arr);
@@ -458,9 +597,26 @@ public class BinaryTree {
         // Node root = constructBSTFromPreorder(pre);
         //inorder(root);
 
-        int post[]=new int[]{15,10,23,25,20,35,42,39,30};
-        idx = post.length-1;
-        Node root = constructBSTFromPostorder(post, -(int)1e9, (int)1e9);
+        // int post[]=new int[]{15,10,23,25,20,35,42,39,30};
+        // idx = post.length-1;
+        // Node root = constructBSTFromPostorder(post, -(int)1e9, (int)1e9);
+        // inorder(root);
+
+        // Node root= null;
+        // camera = 0; 
+        // if(cameraInBinaryTree(root)==-1)
+        //     camera++;
+
+        // int lo[]=new int[]{2,7,8,3,6,9,5,11,4};
+        // int in[]=new int[]{3,7,5,6,11,2,8,4,9};
+        // Node root = constructBinaryTreeFromInorderAndLevelOrder(in, lo, 0, in.length-1);
+        // preorder(root);
+        // System.out.println();
+        // inorder(root);
+        // System.out.println();
+        // postorder(root);
+        int level[]=new int[]{50,17,72,12,23,54,76,9,14,19,67};
+        Node root = constructBSTFromLevelOrder(level);
         inorder(root);
     }
 }
