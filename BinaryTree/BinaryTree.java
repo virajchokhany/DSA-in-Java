@@ -555,6 +555,36 @@ public class BinaryTree {
 
         return root;
     }
+    public static StringBuilder serialise(Node root){
+        if(root==null)  return new StringBuilder("null");
+        StringBuilder sb = new StringBuilder();
+        sb.append(root.data+",");
+        sb.append(serialise(root.left));
+        sb.append(",");
+        sb.append(serialise(root.right));
+        return sb;
+    }
+    public static Node deserialise(String s){
+        String arr[]=s.split(",");
+        Stack<Pair> st = new Stack<>();
+        Node root = new Node(Integer.parseInt(arr[0]));
+        st.push(new Pair(root, -1));
+        for(int i=1;i<arr.length;i++){
+            Node node = null;
+            if(!arr[i].equals("null")){
+                node = new Node(Integer.parseInt(arr[i]));
+            }
+            Pair p = st.peek();
+            if(p.state==-1){
+                p.state++;
+                p.node.left=node;
+            }else{
+                p.node.right = node;
+                st.pop();
+            }
+            if(!arr[i].equals("null")) st.push(new Pair(node, -1));
+        }return root;
+    }
     public static void main(String[] args) {
         // Integer arr[]=new Integer[]{50,25,12,null,null,37,30,null,null,40,null,null,75,62,60,51,null,null,61,null,null,77,74,null,null,78,null,null,87,null,null};
         // Node root = construct(arr);
@@ -615,8 +645,15 @@ public class BinaryTree {
         // inorder(root);
         // System.out.println();
         // postorder(root);
-        int level[]=new int[]{50,17,72,12,23,54,76,9,14,19,67};
-        Node root = constructBSTFromLevelOrder(level);
-        inorder(root);
+        // int level[]=new int[]{50,17,72,12,23,54,76,9,14,19,67};
+        // Node root = constructBSTFromLevelOrder(level);
+        // inorder(root);
+        Integer arr[]=new Integer[]{8,3,1,null,null,6,4,null,null,7,null,null,10,null,14,13,null,null,null};
+        Node root = construct(arr);
+        String  serialised = serialise(root).toString();
+        System.out.println(serialised);
+        root = deserialise(serialised);
+        preorder(root);
     }
+
 }
