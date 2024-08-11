@@ -749,6 +749,183 @@ public class BinaryTree {
         
         return ans;
     }
+    
+    public static List<List<Integer>> diagonalOrderTraversalOfBinaryTree(Node root){
+        List<List<Integer>> ans = new ArrayList<>();
+        if(root==null) return ans;
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(root);
+        while(queue.size()>0){
+            int size = queue.size();
+            ArrayList<Integer> list = new ArrayList<>();
+            while(size-->0){    
+                Node node = queue.remove();
+                while(node!=null){
+                    list.add(node.data);
+                    if(node.left!=null){
+                        queue.add(node.left);
+                    }
+                    node = node.right;
+                }
+            }
+            ans.add(list);
+        }
+        return ans;
+    }
+
+    public static List<List<Integer>> diagonalOrderTraversalOfBinaryTreeAntiClockwise(Node root){
+        List<List<Integer>> ans = new ArrayList<>();
+        if(root==null) return ans;
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(root);
+        while(queue.size()>0){
+            int size = queue.size();
+            ArrayList<Integer> list = new ArrayList<>();
+            while(size-->0){    
+                Node node = queue.remove();
+                while(node!=null){
+                    list.add(node.data);
+                    if(node.right!=null){
+                        queue.add(node.right);
+                    }
+                    node = node.left;
+                }
+            }
+            ans.add(list);
+        }
+        return ans;
+    }
+
+    public static List<Integer> verticalOrderSum(Node root){
+        List<Integer> ans = new ArrayList<>();
+        if(root==null)  return ans;
+
+        int width[]=new int[2];
+        widthOfBinaryTree(root, 0, width);
+        int len = Math.abs(width[1]-width[0]+1);
+        for(int i=0;i<len;i++)  ans.add(0);
+
+        Queue<Pair> queue = new ArrayDeque<>();
+        queue.add(new Pair(root, Math.abs(width[0])));
+        while(queue.size()>0){
+            Pair p = queue.remove();
+            ans.set(p.state, ans.get(p.state)+p.node.data);
+            if(p.node.left!=null){
+                queue.add(new Pair(p.node.left, p.state-1));
+            }
+            if(p.node.right!=null){
+                queue.add(new Pair(p.node.right, p.state+1));
+            }
+        }
+
+        return ans;
+    }
+
+    // leetcode 987
+
+    public static List<List<Integer>> verticalTraversal(Node root){
+        List<List<Integer>> ans = new ArrayList<>();
+        if(root==null)  return null;
+        int width[]=new int[2];
+        widthOfBinaryTree(root, 0, width);
+        int len = Math.abs(width[1]-width[0]+1);
+        for(int i=0;i<len;i++)ans.add(new ArrayList<>());
+        PriorityQueue<Pair> parent = new PriorityQueue<>((a,b)-> {
+            return a.node.data-b.node.data;
+        });
+        PriorityQueue<Pair> child = new PriorityQueue<>((a,b)-> {
+            return a.node.data-b.node.data;
+        });
+        child.add(new Pair(root,Math.abs(width[0])));
+        while (child.size()>0) {
+            int size = child.size();
+            while(size-->0){
+                Pair p = child.remove();
+                ans.get(p.state).add(p.node.data);
+                if(p.node.left!=null){
+                    parent.add(new Pair(p.node.left, p.state-1));
+                }
+                if(p.node.right!=null){
+                    parent.add(new Pair(p.node.right, p.state+1));
+                }
+            }
+            PriorityQueue<Pair> temp = child;
+            child = parent;
+            parent=temp;
+        }
+
+        return ans;
+    }
+    
+    public static List<Integer> diagonalOrderSumUsingBFS(Node root){
+        List<Integer> ans = new ArrayList<>();
+        if(root==null)     return ans;
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(root);
+        while(queue.size()>0){
+            int size = queue.size();
+            int sum = 0;
+            while(size-->0){
+                Node node = queue.remove();
+                while(node!=null){
+                    sum+=node.data;
+                    if(node.left!=null) queue.add(node.left);
+                    node=node.right;
+                }
+
+            }
+            ans.add(sum);
+        }
+        return ans;
+    }
+    
+    public static void diagonalOrderSumUsingDFS(Node root,int diagonal,List<Integer> ans){
+        if(root==null) return;
+        if(ans.size()==diagonal){
+            ans.add(root.data);
+        }
+        else{
+            ans.set(diagonal, ans.get(diagonal)+root.data);
+        }
+        diagonalOrderSumUsingDFS(root.left, diagonal+1, ans);
+        diagonalOrderSumUsingDFS(root.right, diagonal, ans);
+    }
+    
+    private static void kdownFromNode(Node root, Node blocked, int k, List<Integer> ans){
+        if(root==null || k<0 || root==blocked) return;
+        if(k==0){
+            ans.add(root.data);
+            return;
+        }
+        kdownFromNode(root.left, blocked, k-1, ans);
+        kdownFromNode(root.right, blocked, k-1, ans);
+    }
+    public static int kdown(Node root, Node target, int k, List<Integer> ans){
+        if(root == null) 
+            return -1;
+        if(target.data == root.data){
+            kdownFromNode(root, null, k, ans);
+            return 1;
+        }
+        int left = kdown(root.left,target,k,ans);
+        if(left!=-1 && k-left>=0){ // if left has data
+            kdownFromNode(root, root.left, k-left, ans);
+            return left+1;
+        }
+        else{
+            int right = kdown(root.right,target,k,ans);
+            if(right!=-1 && k-right>=0){
+                kdownFromNode(root, root.right, k-right, ans);
+                return right+1;
+            }
+        }
+        
+        return -1;
+    }
+    public static List<Integer> kdown(Node root, Node target, int k){
+        List<Integer> ans = new ArrayList<>();
+        return ans;
+    }
     public static void main(String[] args) {
         // Integer arr[]=new Integer[]{50,25,12,null,null,37,30,null,null,40,null,null,75,62,60,51,null,null,61,null,null,77,74,null,null,78,null,null,87,null,null};
         // Node root = construct(arr);
@@ -756,7 +933,6 @@ public class BinaryTree {
         // // System.out.println(tiltOfBinaryTree(root).sumOfTilt);
         // LargestBSTSubtree largestBSTSubtree = largestBSTSubtree(root);
         // System.out.println(largestBSTSubtree.node.data+"@"+largestBSTSubtree.size);
-
         // preorder(root);
         // postorder(root);
         // inorder(root);
@@ -771,7 +947,6 @@ public class BinaryTree {
         // }else{
         //     System.out.println("Element not found. NO Node to root path");
         // }
-
         // printKLevelsDownRecursive(root, 2,null);
         // printKLevelsFar(root, 2, 37);
         // int post[]=new int[]{7,8,3,9,10,4,1,11,5,6,2,0};
@@ -782,25 +957,20 @@ public class BinaryTree {
         // preorder(root);
         // System.out.println();
         // inorder(root);
-
         // int in[]=new int[]{9,12,14,17,19,23,50,54,67,72,76};
         // Node root = createBalancedBSTFromInorder(in, 0, in.length-1);
         // preorder(root);
-
         // int pre[]=new int[]{30,20,10,15,25,23,39,35,42};
         // Node root = constructBSTFromPreorder(pre);
         //inorder(root);
-
         // int post[]=new int[]{15,10,23,25,20,35,42,39,30};
         // idx = post.length-1;
         // Node root = constructBSTFromPostorder(post, -(int)1e9, (int)1e9);
         // inorder(root);
-
         // Node root= null;
         // camera = 0; 
         // if(cameraInBinaryTree(root)==-1)
         //     camera++;
-
         // int lo[]=new int[]{2,7,8,3,6,9,5,11,4};
         // int in[]=new int[]{3,7,5,6,11,2,8,4,9};
         // Node root = constructBinaryTreeFromInorderAndLevelOrder(in, lo, 0, in.length-1);
@@ -827,9 +997,14 @@ public class BinaryTree {
         // ArrayList<Integer> verticalOrder[] = verticalOrder2(root);
         // for(ArrayList<Integer> list : verticalOrder){
         //     System.out.println(list);
-        // }
-
-        System.out.println(topViewOfBinaryTree(root));
+        // // }
+        // // System.out.println(topViewOfBinaryTree(root));
+        // System.out.println(verticalOrderSum(root));
+        System.out.println(diagonalOrderTraversalOfBinaryTree(root));
+        List<Integer> list = new ArrayList<>();
+        diagonalOrderSumUsingDFS(root, 0, list);
+        System.out.println(list);
+        // System.out.println(diagonalOrderTraversalOfBinaryTreeAntiClockwise(root));
     }
 
 }
