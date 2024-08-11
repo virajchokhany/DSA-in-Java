@@ -585,6 +585,170 @@ public class BinaryTree {
             if(!arr[i].equals("null")) st.push(new Pair(node, -1));
         }return root;
     }
+
+    public static ArrayList<Node> leftViewOfBinaryTree(Node root){
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(root);
+        int size = 0;
+        ArrayList<Node> list = new ArrayList<>();
+        while(queue.size()>0){
+            size = queue.size();
+            boolean isFirstNodeInLevel = true;
+            for(int i=1;i<=size;i++){
+                Node node = queue.remove();
+                if(isFirstNodeInLevel){
+                    list.add(node);
+                    isFirstNodeInLevel = false;
+                }
+                if(node.left!=null){
+                    queue.add(node.left);
+                }
+                if(node.right!=null)    queue.add(node.right);
+            }
+        }
+        return list;
+    }
+
+    public static ArrayList<Node> rightViewOfBinaryTree(Node root){
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(root);
+        int size = 0;
+        ArrayList<Node> list = new ArrayList<>();
+        while(queue.size()>0){
+            size = queue.size();
+            boolean isFirstNodeInLevel = true;
+            for(int i=1;i<=size;i++){
+                Node node = queue.remove();
+                if(isFirstNodeInLevel){
+                    list.add(node);
+                    isFirstNodeInLevel = false;
+                }
+                if(node.right!=null)    queue.add(node.right);
+                if(node.left!=null){
+                    queue.add(node.left);
+                }
+                
+            }
+        }
+        return list;
+    }
+
+    public static List<List<Integer>> verticalOrderOfBinaryTree(Node root){
+        Queue<Pair> queue = new ArrayDeque<>();
+        queue.add(new Pair(root,0));
+        HashMap<Integer,ArrayList<Integer>> map = new HashMap<>();
+        List<List<Integer>> ans = new ArrayList<>();
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        while(queue.size()>0){
+            Pair p = queue.remove();
+            min = Math.min(min, p.state);
+            max = Math.max(max, p.state);
+            if(map.containsKey(p.state)){
+                map.get(p.state).add(p.node.data);
+            }else{
+                ArrayList<Integer> list = new ArrayList<>();
+                list.add(p.node.data);
+                map.put(p.state, list);
+            }
+            if(p.node.left!=null){
+                queue.add(new Pair(p.node.left, p.state-1));
+            }
+            if(p.node.right!=null){
+                queue.add(new Pair(p.node.right, p.state+1));
+            }
+        }
+        for(int i=min;i<=max;i++){
+            ans.add(map.get(i));
+        }
+        return ans;
+    }
+
+    public static ArrayList<Integer>[] verticalOrder2(Node root){
+        int width[]=new int[2];
+        widthOfBinaryTree(root,0,width);
+        ArrayList<Integer> ans[]= new ArrayList[Math.abs(width[1]-width[0]+1)];
+
+        Queue<Pair>  queue = new ArrayDeque<>();
+        queue.add(new Pair(root, Math.abs(width[0])));
+        while(queue.size()>0){
+            Pair p = queue.remove();
+            if(ans[p.state]==null){
+                ArrayList<Integer> list = new ArrayList<>();
+                list.add(p.node.data);
+                ans[p.state] = list;
+            }else{
+                ans[p.state].add(p.node.data);
+            }
+            if(p.node.left!=null){
+                queue.add(new Pair(p.node.left, p.state-1));
+            }
+            if(p.node.right!=null){
+                queue.add(new Pair(p.node.right, p.state+1));
+            }
+        }
+
+
+        return ans;
+    }
+    private static void widthOfBinaryTree(Node root, int i, int width[]) {
+        if(root==null) return;
+        width[0]=Math.min(width[0], i);
+        width[1]= Math.max(width[1], i);
+        widthOfBinaryTree(root.left, i-1, width);
+        widthOfBinaryTree(root.right, i+1, width);
+    }
+
+    public static ArrayList<Integer> bottomViewOfBinaryTree(Node root){
+        int width[]=new int[2];
+        widthOfBinaryTree(root,0,width);
+       
+        ArrayList<Integer> ans = new ArrayList<>();
+        for(int i=0;i<Math.abs(width[1]-width[0]+1);i++)
+            ans.add(null);
+       
+
+        Queue<Pair>  queue = new ArrayDeque<>();
+        queue.add(new Pair(root, Math.abs(width[0])));
+        while(queue.size()>0){
+            Pair p = queue.remove();
+            ans.set(p.state,p.node.data);
+            if(p.node.left!=null){
+                queue.add(new Pair(p.node.left, p.state-1));
+            }
+            if(p.node.right!=null){
+                queue.add(new Pair(p.node.right, p.state+1));
+            }
+        }
+        
+        return ans;
+    }
+
+    public static ArrayList<Integer> topViewOfBinaryTree(Node root){
+        int width[]=new int[2];
+        widthOfBinaryTree(root,0,width);
+       
+        ArrayList<Integer> ans = new ArrayList<>();
+        for(int i=0;i<Math.abs(width[1]-width[0]+1);i++)
+            ans.add(null);
+       
+
+        Queue<Pair>  queue = new ArrayDeque<>();
+        queue.add(new Pair(root, Math.abs(width[0])));
+        while(queue.size()>0){
+            Pair p = queue.remove();
+            if(ans.get(p.state)==null)
+                ans.set(p.state,p.node.data);
+            if(p.node.left!=null){
+                queue.add(new Pair(p.node.left, p.state-1));
+            }
+            if(p.node.right!=null){
+                queue.add(new Pair(p.node.right, p.state+1));
+            }
+        }
+        
+        return ans;
+    }
     public static void main(String[] args) {
         // Integer arr[]=new Integer[]{50,25,12,null,null,37,30,null,null,40,null,null,75,62,60,51,null,null,61,null,null,77,74,null,null,78,null,null,87,null,null};
         // Node root = construct(arr);
@@ -648,12 +812,24 @@ public class BinaryTree {
         // int level[]=new int[]{50,17,72,12,23,54,76,9,14,19,67};
         // Node root = constructBSTFromLevelOrder(level);
         // inorder(root);
-        Integer arr[]=new Integer[]{8,3,1,null,null,6,4,null,null,7,null,null,10,null,14,13,null,null,null};
+        // Integer arr[]=new Integer[]{8,3,1,null,null,6,4,null,null,7,null,null,10,null,14,13,null,null,null};
+        // Node root = construct(arr);
+        // String  serialised = serialise(root).toString();
+        // System.out.println(serialised);
+        // root = deserialise(serialised);
+        // preorder(root);
+        Integer arr[]=new Integer[]{7,3,1,0,null,null,2,null,null,6,4,null,5,null,null,null,12,9,null,11,10,null,15,null,null,null,13,null,null};
         Node root = construct(arr);
-        String  serialised = serialise(root).toString();
-        System.out.println(serialised);
-        root = deserialise(serialised);
-        preorder(root);
+        // ArrayList<Node> rightView = rightViewOfBinaryTree(root);
+        // for(Node node : rightView){
+        //     System.out.print(node.data + " ");
+        // }
+        // ArrayList<Integer> verticalOrder[] = verticalOrder2(root);
+        // for(ArrayList<Integer> list : verticalOrder){
+        //     System.out.println(list);
+        // }
+
+        System.out.println(topViewOfBinaryTree(root));
     }
 
 }
