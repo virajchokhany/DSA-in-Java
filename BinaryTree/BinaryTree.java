@@ -1026,6 +1026,156 @@ public class BinaryTree {
         burningTree2(root, node,ans);
         return ans;
     }
+    
+    public static int maxWidthOfBinaryTree(Node root){
+        if(root==null) return 0;
+        Queue<Pair> queue = new ArrayDeque<>();
+        queue.add(new Pair(root, 0));
+        int ans = Integer.MIN_VALUE;
+        while(queue.size()>0){
+            int size = queue.size();
+            boolean isFirst = true;
+            while(size-->0){
+                Pair first = null,second = null;
+                Pair p = queue.remove();
+                if(isFirst){
+                    first = p;
+                    isFirst = false;
+                }
+                second = p;
+                if(p.node.left!=null){
+                    queue.add(new Pair(p.node.left, p.state*2+1));
+                }
+                if(p.node.right!=null){
+                    queue.add(new Pair(p.node.right, p.state*2+2));
+                }
+                if(size==0)
+                    ans = Math.max(ans, second.state-first.state+1);
+            }
+        }
+        return ans;
+    }
+    
+    public static Node[] convertBSTToSortedDoublyLL(Node root){
+        if(root == null){
+            return new Node[2];
+        }
+        Node left[] = convertBSTToSortedDoublyLL(root.left);
+        Node right[] = convertBSTToSortedDoublyLL(root.right);
+        if(left[0] == null){
+            if(right[0] == null){
+                return new Node[]{root,root};
+            }else{
+                root.right = right[0];
+                right[0].left=root;
+                return new Node[]{root,right[1]};
+            }
+        }else{
+            if(right[0]==null){
+                left[1].right = root;
+                root.left=right[1];
+                return new Node[]{left[0],root};
+            }else{
+                left[1].right = root;
+                root.left = left[1];
+                root.right=right[0];
+                right[0].left=root;
+                return new Node[]{left[0],right[1]};
+            }
+        }
+    }
+    public static Node mid(Node node){
+        if(node == null || node.right==null) return node;
+        Node slow = node, fast = node;
+        while(fast!=null && fast.right!=null){
+            slow = slow.right;
+            fast= fast.right.right;
+        }
+        return slow;
+    }
+    public static Node convertSortedDLLToBalancedBST(Node node){
+        if(node == null || (node.left==null && node.right==null)) {
+            return node;
+        }
+
+        Node mid = mid(node);
+        Node prev = mid.left;
+        Node next = mid.right;
+        if(prev!=null)prev.right = null;
+        if(next!=null)next.left = null;
+        mid.right = mid.left = null; 
+        mid.left = convertSortedDLLToBalancedBST(node);
+        mid.right = convertSortedDLLToBalancedBST(next);
+        return mid;
+    }
+    
+    static class MaxPathSum{
+        int maxSumBetweenLeaves=Integer.MIN_VALUE;
+        int maxSumFromLeafToRoot;
+    }
+    public static MaxPathSum maximumPathSum(Node root){
+        if(root==null){
+            return new MaxPathSum();
+        }
+        MaxPathSum left = maximumPathSum(root.left);
+        MaxPathSum right = maximumPathSum(root.right);
+        MaxPathSum ans = new MaxPathSum();
+        ans.maxSumBetweenLeaves = Math.max(left.maxSumBetweenLeaves, right.maxSumBetweenLeaves);
+        if(root.left!=null && root.right!=null){
+            ans.maxSumBetweenLeaves = Math.max(ans.maxSumBetweenLeaves, left.maxSumFromLeafToRoot + right.maxSumFromLeafToRoot + root.data);
+        }
+        ans.maxSumFromLeafToRoot = root.data + Math.max(left.maxSumFromLeafToRoot, right.maxSumFromLeafToRoot);
+        return ans;
+    }
+    
+    static Node lca = null;
+    public static int  LCA_(Node root, Node p, Node q){
+        if(root == null) return -1;
+    
+        if(root == p){  // p is found
+            if(checkIfSubtreeContains(root,q,null)){
+                lca=root;
+                return 0; 
+            }
+            return 1;
+        }
+        int left = LCA_(root.left, p, q);
+        if(left!=-1){ // node p found in left, q not found
+            if(left==0){
+                return 0;
+            }else{
+                if(checkIfSubtreeContains(root, q, root.left)){
+                    lca=root;
+                    return 0;
+                }
+                return 1;
+            }
+        }
+        else{
+            int right = LCA_(root.right,p,q);
+            if(right!=-1){ // node p found in right, 
+                if(right==0){
+                    return 0;
+                }else{
+                    if(checkIfSubtreeContains(root, q, root.right)){
+                        lca=root;
+                        return 0;
+                    }
+                    return 1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private static boolean checkIfSubtreeContains(Node root, Node q, Node blocked) {
+        if(root == null || root==blocked) return false;
+        return root == q || checkIfSubtreeContains(root.left, q, blocked) || checkIfSubtreeContains(root.right, q, blocked);
+    }
+    public static Node LCA(Node root, Node p, Node q){
+        LCA_(root, p, q);
+        return lca;
+    }
     public static void main(String[] args) {
         // Integer arr[]=new Integer[]{50,25,12,null,null,37,30,null,null,40,null,null,75,62,60,51,null,null,61,null,null,77,74,null,null,78,null,null,87,null,null};
         // Node root = construct(arr);
@@ -1088,27 +1238,50 @@ public class BinaryTree {
         // System.out.println(serialised);
         // root = deserialise(serialised);
         // preorder(root);
-        Integer arr[]=new Integer[]{7,3,1,0,null,null,2,null,null,6,4,null,5,null,null,null,12,9,null,11,10,null,15,null,null,null,13,null,null};
-        Node root = construct(arr);
-        // ArrayList<Node> rightView = rightViewOfBinaryTree(root);
-        // for(Node node : rightView){
-        //     System.out.print(node.data + " ");
-        // }
-        // ArrayList<Integer> verticalOrder[] = verticalOrder2(root);
-        // for(ArrayList<Integer> list : verticalOrder){
-        //     System.out.println(list);
+        // Integer arr[]=new Integer[]{7,3,1,0,null,null,2,null,null,6,4,null,5,null,null,null,12,9,null,11,10,null,15,null,null,null,13,null,null};
+        // Node root = construct(arr);
+        // // ArrayList<Node> rightView = rightViewOfBinaryTree(root);
+        // // for(Node node : rightView){
+        // //     System.out.print(node.data + " ");
         // // }
-        // // System.out.println(topViewOfBinaryTree(root));
-        // System.out.println(verticalOrderSum(root));
-        // System.out.println(diagonalOrderTraversalOfBinaryTree(root));
-        // List<Integer> list = new ArrayList<>();
-        // diagonalOrderSumUsingDFS(root, 0, list);
-        // System.out.println(list);
-        Node target = findNode(root,arr[9]);
-        minimumTimeToBurnTree(root,target);
-        System.out.println(time);
-        System.out.println(burningTree2(root,target));
+        // // ArrayList<Integer> verticalOrder[] = verticalOrder2(root);
+        // // for(ArrayList<Integer> list : verticalOrder){
+        // //     System.out.println(list);
+        // // // }
+        // // // System.out.println(topViewOfBinaryTree(root));
+        // // System.out.println(verticalOrderSum(root));
+        // // System.out.println(diagonalOrderTraversalOfBinaryTree(root));
+        // // List<Integer> list = new ArrayList<>();
+        // // diagonalOrderSumUsingDFS(root, 0, list);
+        // // System.out.println(list);
+        // Node target = findNode(root,arr[9]);
+        // minimumTimeToBurnTree(root,target);
+        // System.out.println(time);
+        // System.out.println(burningTree2(root,target));
         // System.out.println(diagonalOrderTraversalOfBinaryTreeAntiClockwise(root));
+
+        // Integer arr[]= new Integer[]{25,20,10,5,null,null,12,null,null,22,null,null,36,30,28,null,null,null,40,38,null,null,48,null,null};
+        // Node root = construct(arr);
+
+        // Node dll[]=convertBSTToSortedDoublyLL(root);
+        // Node head =dll[0];
+        // while(head!=null){
+        //     System.out.print(head.data+" ");
+        //     head=head.right;
+        // }
+        // System.out.println();
+        // root = convertSortedDLLToBalancedBST(dll[0]);
+        // inorder(root);
+        Integer arr[]=new Integer[]{-12,5,-8,2,-3,null,null,-4,null,null,6,null,null,1,null,null,60,3,null,null,9,null,20,9,null,null,-1,10,null,null,null};
+        Node root = construct(arr);
+        // System.out.println(maximumPathSum(root).maxSumBetweenLeaves);
+        Node p =findNode(root, 68768);
+        Node q = findNode(root, 18790);
+        LCA(root, p, q);
+        if(lca!=null)
+        System.out.println(lca.data);
+        else
+        System.out.println("LCA does not exist");
     }
 
 }
