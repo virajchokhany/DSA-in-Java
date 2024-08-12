@@ -977,6 +977,55 @@ public class BinaryTree {
         Node right = findNode(root.right, data);
         return right;
     }
+    
+    public static void burningTree2LevelOrder(Node root, int level,Node blocked, List<List<Integer>> ans){
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(root);
+        while(queue.size()>0){
+            int size = queue.size();
+            while(size-->0){
+                Node node = queue.remove();
+                if(level==ans.size()){
+                    ans.add(new ArrayList<>());
+                }
+                ans.get(level).add(node.data);
+                if(node.left!=null && node.left!=blocked){
+                    queue.add(node.left);
+                }
+                if(node.right!=null && node.right!=blocked){
+                    queue.add(node.right);
+                }
+            }
+            level++;
+        }
+    }
+    public static int burningTree2(Node root, Node target,List<List<Integer>> ans){
+        if(root==null) return -1;
+        if(root==target){
+            burningTree2LevelOrder(root,0,null,ans);
+            return 1;
+        }
+        int left = burningTree2(root.left,target,ans);
+        if(left!=-1){
+            burningTree2LevelOrder(root,left,root.left,ans);
+            return 1+left;
+        }
+        else{
+            int right = burningTree2(root.right, target,ans);
+            if(right!=-1){
+                burningTree2LevelOrder(root,right,root.right,ans);
+                return 1+right;
+            }
+        }
+        return -1;
+    }
+    public static List<List<Integer>> burningTree2(Node root, Node node){
+        List<List<Integer>> ans = new ArrayList<>();
+        if(root==null) return ans;
+        // Node node = findNode(root, data);
+        burningTree2(root, node,ans);
+        return ans;
+    }
     public static void main(String[] args) {
         // Integer arr[]=new Integer[]{50,25,12,null,null,37,30,null,null,40,null,null,75,62,60,51,null,null,61,null,null,77,74,null,null,78,null,null,87,null,null};
         // Node root = construct(arr);
@@ -1058,7 +1107,7 @@ public class BinaryTree {
         Node target = findNode(root,arr[9]);
         minimumTimeToBurnTree(root,target);
         System.out.println(time);
-        
+        System.out.println(burningTree2(root,target));
         // System.out.println(diagonalOrderTraversalOfBinaryTreeAntiClockwise(root));
     }
 
