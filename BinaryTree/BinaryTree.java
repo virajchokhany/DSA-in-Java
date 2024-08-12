@@ -908,13 +908,13 @@ public class BinaryTree {
             return 1;
         }
         int left = kdown(root.left,target,k,ans);
-        if(left!=-1 && k-left>=0){ // if left has data
+        if(left!=-1){ // if left has data
             kdownFromNode(root, root.left, k-left, ans);
             return left+1;
         }
         else{
             int right = kdown(root.right,target,k,ans);
-            if(right!=-1 && k-right>=0){
+            if(right!=-1){
                 kdownFromNode(root, root.right, k-right, ans);
                 return right+1;
             }
@@ -924,7 +924,58 @@ public class BinaryTree {
     }
     public static List<Integer> kdown(Node root, Node target, int k){
         List<Integer> ans = new ArrayList<>();
+        kdown(root,target,k,ans);
         return ans;
+    }
+    static int time = 0;
+    public static void travelLevelOrder(Node root, int level,Node blocked){
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(root);
+        while(queue.size()>0){
+            int size = queue.size();
+            while(size-->0){
+                Node node = queue.remove();
+                if(node.left!=null && node.left!=blocked){
+                    queue.add(node.left);
+                }
+                if(node.right!=null && node.right!=blocked){
+                    queue.add(node.right);
+                }
+            }
+            level++;
+        }
+        time = Math.max(time, level-1);
+    }
+    public static int minimumTimeToBurnTree_(Node root, Node target){
+        if(root==null) return -1;
+        if(root==target){
+            travelLevelOrder(root,0,null);
+            return 1;
+        }
+        int left = minimumTimeToBurnTree_(root.left,target);
+        if(left!=-1){
+            travelLevelOrder(root,left,root.left);
+            return 1+left;
+        }
+        else{
+            int right = minimumTimeToBurnTree_(root.right, target);
+            if(right!=-1){
+                travelLevelOrder(root,right,root.right);
+                return 1+right;
+            }
+        }
+        return -1;
+    }
+    public static int minimumTimeToBurnTree(Node root, Node target){
+        minimumTimeToBurnTree_(root, target);
+        return time;
+    }
+    private static Node findNode(Node root, int data){
+        if(root==null || root.data==data) return root;
+        Node left = findNode(root.left, data);
+        if(left!=null) return left;
+        Node right = findNode(root.right, data);
+        return right;
     }
     public static void main(String[] args) {
         // Integer arr[]=new Integer[]{50,25,12,null,null,37,30,null,null,40,null,null,75,62,60,51,null,null,61,null,null,77,74,null,null,78,null,null,87,null,null};
@@ -1000,10 +1051,14 @@ public class BinaryTree {
         // // }
         // // System.out.println(topViewOfBinaryTree(root));
         // System.out.println(verticalOrderSum(root));
-        System.out.println(diagonalOrderTraversalOfBinaryTree(root));
-        List<Integer> list = new ArrayList<>();
-        diagonalOrderSumUsingDFS(root, 0, list);
-        System.out.println(list);
+        // System.out.println(diagonalOrderTraversalOfBinaryTree(root));
+        // List<Integer> list = new ArrayList<>();
+        // diagonalOrderSumUsingDFS(root, 0, list);
+        // System.out.println(list);
+        Node target = findNode(root,arr[9]);
+        minimumTimeToBurnTree(root,target);
+        System.out.println(time);
+        
         // System.out.println(diagonalOrderTraversalOfBinaryTreeAntiClockwise(root));
     }
 
