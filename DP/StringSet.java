@@ -1,6 +1,22 @@
 package DP;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 public class StringSet {
+    public static void display1D(int dp[]){
+        for(int data : dp){
+            System.out.print(data + " ");
+        }
+        System.out.println();
+    }
+    public static void display2D(int dp[][]){
+        for(int d[] : dp){
+            display1D(d);
+        }
+        System.out.println();
+    }
     // 72
     public int minDistance(String word1, String word2) {
         int dp[][]=new int[word1.length()+1][word2.length()+1];
@@ -239,7 +255,143 @@ public class StringSet {
     }
     
 
+    public int maxDotProduct(int a[],int i,int b[],int j,int dp[]){
+        if(i==0 || j==0) return -(int)1e9;
+       
+        return Math.max(a[i-1]*b[j-1]+maxDotProduct(a,i-1,b,j-1,dp),
+        Math.max(maxDotProduct(a, i-1, b, j, dp),Math.max(maxDotProduct(a, i, b, j-1, dp),a[i-1]*b[j-1])));
+    }
+
+    public static void longestPalindrome(String s) {
+        int mxLen = 0;
+        int numberOfPalSS = 0;
+        int start=0;
+        boolean dp[][]=new boolean[s.length()][s.length()];
+        for(int gap=0;gap<s.length();gap++){
+            for(int i=0,j=gap+i;j<s.length();i++,j++){
+                if(gap==0) dp[i][j]=true;
+                else if(gap==1 && s.charAt(i)==s.charAt(j)) dp[i][j]=true;
+                else{
+                    if(s.charAt(i)==s.charAt(j)){
+                        dp[i][j]=dp[i+1][j-1];
+                    }else{
+                        dp[i][j]=false;
+                    }
+                }
+                if(dp[i][j]){
+                    numberOfPalSS++;
+                    if(mxLen<j-i+1){
+                        start = i;
+                        mxLen=j-i+1;
+                    }
+                }
+            }
+        }
+        System.out.println(numberOfPalSS);
+        System.out.println(mxLen);
+        System.out.println(s.substring(start, start+mxLen));
+    }
     
+    // 132
+    public int minCut(String s){
+        boolean dp[][]=new boolean[s.length()][s.length()];
+        for(int gap=0;gap<s.length();gap++){
+            for(int i=0,j=gap+i;j<s.length();i++,j++){
+                if(gap==0) dp[i][j]=true;
+                else if(gap==1 && s.charAt(i)==s.charAt(j)) dp[i][j]=true;
+                else{
+                    if(s.charAt(i)==s.charAt(j)){
+                        dp[i][j]=dp[i+1][j-1];
+                    }else{
+                        dp[i][j]=false;
+                    }
+                }
+            }
+        }
+        return minCut(s,dp,0);
+    }
+    public int minCut(String s, boolean dp[][],int idx){
+        if(idx==s.length() || dp[idx][s.length()-1]) return 0;
+        int ans = 0;
+        for(int i=idx;i<s.length();i++){
+            if(dp[idx][i]){
+                ans = Math.min(ans, minCut(s, dp, i+1) + 1);
+            }
+        }
+        return ans;
+    }
+    public  static boolean wordBreak(String s, List<String> wordDict) {
+        HashSet<String> set = new HashSet<>();
+        for(String word : wordDict){
+            set.add(word);
+        }
+        boolean dp[]=new boolean[s.length()+1];
+        boolean ans = wordBreak_tabu(s,set,0,dp);
+        //display(dp);
+        return ans;
+    }
+    public static boolean wordBreak(String s, HashSet<String> set, int idx,Boolean dp[]){
+        if(idx==s.length()) return dp[idx]=true;
+        if(dp[idx]!=null) return dp[idx];
+        for(int i=idx;i<s.length();i++){
+            String ss = s.substring(idx,i+1);
+            if(set.contains(ss)){
+                boolean ans = wordBreak(s,set,i+1,dp);
+                if(ans==true) return dp[idx]=ans;
+            }
+        }
+        return dp[idx]=false;
+    }
+    
+    public static boolean wordBreak_tabu(String s, HashSet<String> set, int IDX,boolean dp[]){
+        for(int idx=s.length();idx>=0;idx--){
+            if(idx==s.length()){
+                dp[idx]=true;
+                continue;
+            }
+            for(int i=idx;i<s.length();i++){
+                String ss = s.substring(idx,i+1);
+                if(set.contains(ss)){
+                    Boolean ans = dp[i+1];  //wordBreak(s,set,i+1,dp);
+                    if(ans==true){
+                        dp[idx]=ans;
+                        continue;
+                    }
+                }
+            }
+        }
+        return dp[IDX];
+    }
+    public static int LPSS(String s){
+        int dp[][]=new int[s.length()][s.length()];
+        int ans = LPSS(s,0,s.length()-1,dp);
+        display2D(dp);
+        return ans;
+    }
+    public static int LPSS(String s,int I,int J,int dp[][]){
+        for(int gap=0;gap<s.length();gap++){
+            for(int i=0,j=gap+i;j<s.length();i++,j++){
+                if(i==j){
+                    dp[i][j]=1;
+                    continue;
+                }
+                if(s.charAt(i)==s.charAt(j)){
+                    dp[i][j]=2+dp[i+1][j-1];  //LPSS(s,i+1,j-1,dp);
+                }else{
+                    dp[i][j]=Math.max(dp[i][j-1], dp[i+1][j]);
+                }
+            }
+        }
+        return dp[I][J];
+    }
+    public static void main(String[] args) {
+        // String s = "gegpeepf";
+        // longestPalindrome(s);
+        // List<String> wordDict = new ArrayList<>();
+        // wordDict.add("leet");
+        // wordDict.add("code");
+        // System.out.println(wordBreak("leetcode",wordDict));
 
-
+        LPSS("abcbbad");
+    }
 }
