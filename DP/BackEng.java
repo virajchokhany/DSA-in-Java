@@ -160,6 +160,34 @@ public class BackEng {
         for(int i=0;i<dp.length;i++){
             System.out.print(dp[i] + " ");
         }
+        System.out.println();
+        System.out.println(wordBreak_BackEng(1,s.length(),s,dp,wordDict,set));
+        return ans;
+    }
+
+    private static ArrayList<String> wordBreak_BackEng(int start, int end,String s, boolean[] dp, List<String> wordDict,HashSet<String> set) {
+        if(start > end){
+            ArrayList<String> base = new ArrayList<>();
+            base.add("");
+            return base;
+        }
+        ArrayList<String> ans = new ArrayList<>();
+       
+        for(int idx=start;idx<=s.length();idx++){
+            if(dp[idx]){
+                String str = s.substring(start-1, idx);
+                if(set.contains(str)){
+                    ArrayList<String> sans = wordBreak_BackEng(idx+1,end,s, dp, wordDict, set);
+                    for(String ss : sans){
+                        if(!ss.equals(""))
+                            ans.add(str+" "+ss);
+                        else
+                            ans.add(str);
+                    }
+                }
+            }
+        }
+        
         return ans;
     }
     public static boolean wordBreak_tabu(String s, HashSet<String> set, int IDX,boolean dp[]){
@@ -171,7 +199,7 @@ public class BackEng {
             for(int i=idx;i<s.length();i++){
                 String ss = s.substring(idx,i+1);
                 if(set.contains(ss)){
-                    Boolean ans = dp[i+1];  //wordBreak(s,set,i+1,dp);
+                    boolean ans = dp[i+1];  //wordBreak(s,set,i+1,dp);
                     if(ans==true){
                         dp[idx]=ans;
                         continue;
@@ -187,9 +215,9 @@ public class BackEng {
         // maxGold(3, 3, new int[][]{{1, 3, 3},
         // {2, 1, 4},
         // {0, 6, 4}});
-        String s = "catsanddog";
+        String s = "pineapplepenapple";
         ArrayList<String> wordDict = new ArrayList<>(); //["cat","cats","and","sand","dog"];
-        wordDict.add("cat");wordDict.add("cats");wordDict.add("and");wordDict.add("sand");wordDict.add("dog");
+        wordDict.add("apple");wordDict.add("pen");wordDict.add("applepen");wordDict.add("pine");wordDict.add("pineapple");
         wordBreak(s, wordDict);
         
     }
