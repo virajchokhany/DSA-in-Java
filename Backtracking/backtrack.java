@@ -284,6 +284,131 @@ public class backtrack {
         }
         printPermutations2(cb+1, tb, ssf, ts, vis,asf+"-"); // dont house any number
     }
+
+    public static void queenCombinationQueenChooses(int tq,int cell, boolean chess[][]){
+        if(tq==0){
+            for(int i=0;i<chess.length;i++){
+                for(int j=0;j<chess.length;j++){
+                    if(chess[i][j]){
+                        System.out.print("q");
+                    }else{
+                        System.out.print("-");
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+            return;
+        }
+        
+        int n = chess.length;
+        int end = n*n-1;
+
+        for(int i=cell;i<=end;i++){
+            int r = i/n;
+            int c = i % n;
+            chess[r][c]=true;
+            queenCombinationQueenChooses(tq-1, i+1, chess);
+            chess[r][c]=false;
+        }
+
+    }
+
+    public static void queenCombinationQC1D(int tq, boolean vis[],int cell,int n){
+        if(tq==0){
+            for(int i=0;i<n;i++){
+                for(int j=0;j<n;j++){
+                    if(vis[n*i+j]){
+                        System.out.print("q");
+                    }else{
+                        System.out.print("-");
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+            return;
+        }
+        for(int i=cell;i<=n*n-1;i++){
+            vis[i]=true;
+            queenCombinationQC1D(tq-1, vis, i+1, n);
+            vis[i]=false;
+        }
+    }
+
+    // left -> r-c+n-1
+    static int counter = 0;
+    public static void NQueensPermutationQC1D(int qpsf, int vis[],int n,boolean rows[],boolean cols[],boolean left[],boolean right[]){
+        if(qpsf==n){
+            counter++;
+            for(int i=0;i<n;i++){
+                for(int j=0;j<n;j++){
+                    if(vis[i*n+j]!=0){
+                        System.out.print("q"+vis[n*i+j]);
+                    }else{
+                        System.out.print("-");
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+            return;
+        }
+        for(int i=0;i<n*n;i++){
+            if(vis[i]==0 && isTheQueenSafe(i,n,rows,cols,left,right)){
+                int r = i/n;
+                int c = i%n;
+                vis[i]=qpsf+1;
+                rows[r]=cols[c]=left[r-c+n-1]=right[r+c]=true;
+                NQueensPermutationQC1D(qpsf+1, vis, n, rows, cols, left, right);
+                vis[i]=0;
+                rows[r]=cols[c]=left[r-c+n-1]=right[r+c]=false;
+            }
+        }
+    }
+    private static boolean isTheQueenSafe(int cell, int n, boolean[] rows, boolean[] cols, boolean[] left,
+            boolean[] right) {
+        int r = cell/n;
+        int c = cell % n;
+        if(rows[r] || cols[c] || left[r-c+n-1] || right[r+c]) return false;
+        return true;
+    }
+
+    public static void NKnightsCombinationKC1D(int kpsf,boolean vis[],int n,int cell,int dir[][]){
+        if(kpsf == n){
+            counter++;
+            for(int i=0;i<n;i++){
+                for(int j=0;j<n;j++){
+                    if(vis[n*i+j]){
+                        System.out.print("K");
+                    }else{
+                        System.out.print("-");
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+            return;
+        }
+        for(int i=cell;i<n*n;i++){
+            if(isKnightSafe(vis,i,dir,n)){
+                vis[i]=true;
+                NKnightsCombinationKC1D(kpsf+1, vis, n, i+1, dir);
+                vis[i]=false;
+            }
+        }
+
+    }
+    private static boolean isKnightSafe(boolean[] vis, int cell, int[][] dir,int n) {
+        int r = cell/n;
+        int c = cell%n;
+        for(int d[]:dir){
+            int sr = r+d[0];
+            int sc = c+d[1];
+            if(sr>=0 && sr<n && sc>=0 && sc<n && vis[sr*n+sc])return false;
+        }
+        return true;
+    }
     public static void main(String[] args) {
         // printAbbreviations("pep", 0, "", 0);
         // NQueens(0, 4, new boolean[7], new boolean[7], new boolean[4], "");
@@ -296,7 +421,23 @@ public class backtrack {
         // printPermutations(new int[4], 1,2);
         // printCombincation(1, 2,0, new char[4]);
 
-        printPermutations2(1, 4, 0, 2, new boolean[3], "");
+        // printPermutations2(1, 4, 0, 2, new boolean[3], "");
+        // queenCombinationQueenChooses(4,0,new boolean[4][4]);
+        // queenCombinationQC1D(2,new boolean[4],0,2);
+        // int n = 4;
+        // int vis[]=new int[n*n];
+        // boolean rows[]=new boolean[n], cols[]=new boolean[n], left[]=new boolean[2*n-1], right[]=new boolean[2*n-1];
+        // NQueensPermutationQC1D(0, vis, n, rows, cols, left, right);
+        // System.out.println(counter);
+
+        int n = 2;
+        boolean[] vis=new boolean[n*n];
+        int cell = 0;
+        int dir[][]={{-2,-1},{-2,1},{-1,2},{1,2},{2,1},{2,-1},{1,-2},{-1,-2}};
+        counter=0;
+        System.out.println(counter);
+        NKnightsCombinationKC1D(0, vis, n, cell, dir);
+        System.out.println(counter);
     }
     
 }
